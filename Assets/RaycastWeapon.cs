@@ -16,4 +16,6 @@ public class RaycastWeapon : MonoBehaviour
         Debug.DrawLine(gun_end.position, gun_end.position + transform.forward * 10f, Color.red, 2f);
 
     }
+
+    //Changes
 }
