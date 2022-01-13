@@ -11,11 +11,17 @@ public class RaycastWeapon : MonoBehaviour
         RaycastHit hit;
         if(Physics.Raycast(gun_end.position, transform.forward, out hit, 10f))
         {
-            if(hit.transform.GetComponent<Rigidbody>() != null)
+            Debug.Log("Hit Something!");
+
+            if (hit.transform.GetComponent<Rigidbody>() != null)
             {
-                if(hit.transform.GetComponent<NavMeshAgent>() != null)
+                Debug.Log("Hit Something with RigidBody!");
+
+                if (hit.transform.GetComponent<NavMeshAgent>() != null)
                 {
                     hit.transform.GetComponent<NavMeshAgent>().enabled = false;
+                    hit.transform.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+                    Debug.Log("Hit Something with and NavMeshAgent!");
                 }
                 hit.transform.GetComponent<Rigidbody>().AddForceAtPosition(transform.forward * 20f, hit.point);
 
