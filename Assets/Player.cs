@@ -8,6 +8,8 @@ public class Player : MonoBehaviour
     private float turn_speed = 360f;
     private bool can_jump = false;
 
+    public bool is_loud = false;
+
     public RaycastWeapon laser;
     // Start is called before the first frame update
     void Start()
@@ -50,6 +52,17 @@ public class Player : MonoBehaviour
         if(Input.GetButton("Fire1"))
         {
             laser.ShootRay();
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if(is_loud)
+        {
+            if(other.GetComponent<Enemy>() != null)
+            {
+                other.GetComponent<Enemy>().HearPlayer(this);
+            }
         }
     }
 }
