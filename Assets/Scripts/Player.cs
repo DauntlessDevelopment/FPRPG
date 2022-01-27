@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -10,11 +11,15 @@ public class Player : MonoBehaviour
 
     public bool is_loud = false;
 
+    public Text ammo_text;
+    public Text ammo_reserve_text;
+
     public RaycastWeapon laser;
     // Start is called before the first frame update
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        StartCoroutine(UpdateUI());
     }
 
     // Update is called once per frame
@@ -28,13 +33,16 @@ public class Player : MonoBehaviour
         if(Input.GetAxisRaw("Vertical") != 0)
         {
             transform.Translate(Input.GetAxis("Vertical") * transform.forward * move_speed * Time.deltaTime, Space.World);
+            transform.GetComponent<Rigidbody>().velocity = new Vector3(0, transform.GetComponent<Rigidbody>().velocity.y, 0);
         }
         if(Input.GetAxisRaw("Horizontal") != 0)
         {
             transform.Translate(Input.GetAxis("Horizontal") * transform.right * move_speed * Time.deltaTime, Space.World);
+            transform.GetComponent<Rigidbody>().velocity = new Vector3(0, transform.GetComponent<Rigidbody>().velocity.y, 0);
+
         }
 
-        if(Input.GetAxisRaw("Mouse X") != 0)
+        if (Input.GetAxisRaw("Mouse X") != 0)
         {
             transform.Rotate(transform.up, Input.GetAxis("Mouse X") * turn_speed * Time.deltaTime);
         }
@@ -49,9 +57,14 @@ public class Player : MonoBehaviour
             
         }
         
-        if(Input.GetButton("Fire1"))
+        if(Input.GetButtonDown("Fire1"))
         {
             laser.ShootRay();
+        }
+
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            laser.Reload();
         }
     }
 
@@ -63,6 +76,26 @@ public class Player : MonoBehaviour
             {
                 other.GetComponent<Enemy>().HearPlayer(this);
             }
+        }
+    }
+
+    IEnumerator UpdateUI()
+    {
+        while(true)
+        {
+            yield return new WaitForFixedUpdate();
+            ammo_text.text = $"Ammo : {laser.GetAmmoCount()}/{laser.GetMaxAmmo()}";
+            ammo_reserve_text.text = $"Reserve : {laser.GetTotalAmmo()}";
+        }
+    }
+
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.GetComponent<AmmoCollectable>() != null)
+        {
+            laser.PickupAmmo(collision.gameObject.GetComponent<AmmoCollectable>().amount);
+            Destroy(collision.gameObject);
         }
     }
 }
