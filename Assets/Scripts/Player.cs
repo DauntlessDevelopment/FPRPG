@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    private float health = 100f;
     private float move_speed = 10f;
     private float turn_speed = 360f;
     private bool can_jump = false;
@@ -13,6 +14,7 @@ public class Player : MonoBehaviour
 
     public Text ammo_text;
     public Text ammo_reserve_text;
+    public Text health_text;
 
     public RaycastWeapon laser;
     // Start is called before the first frame update
@@ -25,9 +27,27 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(health == 0)
+        {
+            return;
+        }
         HandleInput(); 
     }
 
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+        if(health <= 0)
+        {
+            health = 0;
+            Die();
+        }
+        health_text.text = "Health : " + health;
+    }    
+    private void Die()
+    {
+        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+    }
     private void HandleInput()
     {
         if(Input.GetAxisRaw("Vertical") != 0)

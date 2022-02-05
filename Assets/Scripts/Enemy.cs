@@ -8,6 +8,8 @@ public class Enemy : MonoBehaviour
 {
     GameObject player;
     private int view_cone_stage = 0;
+    private float last_attack = 0f;
+    private float attack_rate = 2f;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,6 +24,11 @@ public class Enemy : MonoBehaviour
             {
                 GetComponent<NavMeshAgent>().SetDestination(player.transform.position);
 
+                if(Vector3.Distance(transform.position, player.transform.position) < 3f && Time.timeSinceLevelLoad > last_attack + 1/attack_rate)
+                {
+                    player.GetComponent<Player>().TakeDamage(10);
+                    last_attack = Time.timeSinceLevelLoad;
+                }
             }
         }
 
@@ -33,7 +40,12 @@ public class Enemy : MonoBehaviour
         {
             GetComponentInChildren<Animator>().SetFloat("speed", GetComponent<NavMeshAgent>().velocity.magnitude);
         }
-        
+        else if(GetComponentInChildren<Animator>() != null)
+        {
+            GetComponentInChildren<Animator>().SetFloat("speed", 0);
+
+        }
+
     }
 
     private void ViewCone(int stages = 3, float FOV = 90f, int rays_per_frame = 10, float range = 10f)
