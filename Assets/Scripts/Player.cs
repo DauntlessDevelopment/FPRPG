@@ -82,6 +82,11 @@ public class Player : MonoBehaviour
             laser.ShootRay();
         }
 
+        if(Input.GetButtonDown("Fire2"))
+        {
+            laser.ToggleADS();
+        }
+
         if(Input.GetKeyDown(KeyCode.R))
         {
             laser.Reload();
